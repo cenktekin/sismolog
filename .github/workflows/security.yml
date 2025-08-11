@@ -1,0 +1,208 @@
+name: Security Scan
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+  schedule:
+    - cron: '0 2 * * *'  # Her gün 02:00'da çalışır
+
+jobs:
+  security-audit:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18.x'
+        cache: 'npm'
+        cache-dependency-path: package-lock.json
+    
+    - name: Install dependencies
+      run: npm ci
+    
+    - name: Run npm audit
+      run: npm audit --audit-level moderate
+      continue-on-error: true
+    
+    - name: Generate npm audit report
+      run: npm audit --json > npm-audit-report.json
+    
+    - name: Upload npm audit report
+      uses: actions/upload-artifact@v3
+      if: always()
+      with:
+        name: npm-audit-report
+        path: npm-audit-report.json
+        retention-days: 30
+
+  snyk-vulnerability-scan:
+    runs-on: ubuntu-latest
+    if: github.event_name != 'schedule'  # Manuel çalıştırmada sadece
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18.x'
+        cache: 'npm'
+        cache-dependency-path: package-lock.json
+    
+    - name: Install dependencies
+      run: npm ci
+    
+    - name: Run Snyk security scan
+      uses: snyk/actions/node@master
+      env:
+        SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+      with:
+        args: --severity-threshold=high
+        command: test
+    
+    - name: Upload Snyk scan results
+      uses: actions/upload-artifact@v3
+      if: always()
+      with:
+        name: snyk-scan-results
+        path: snyk-report.json
+        retention-days: 30
+
+  dependency-check:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18.x'
+        cache: 'npm'
+        cache-dependency-path: package-lock.json
+    
+    - name: Install dependencies
+      run: npm ci
+    
+    - name: Install OWASP Dependency Check
+      uses: securecodewarrior/github-action-add-sarif@v1
+      with:
+        sarif-file: 'dependency-check-report.sarif'
+    
+    - name: Run OWASP Dependency Check
+      run: |
+        npm install -g @dependency-check/cli
+        dependency-check --project "Türkiye Deprem Takip Sistemi" --scan ./ --format SARIF --out dependency-check-report.sarif
+      continue-on-error: true
+    
+    - name: Upload dependency check report
+      uses: actions/upload-artifact@v3
+      if: always()
+      with:
+        name: dependency-check-report
+        path: dependency-check-report.sarif
+        retention-days: 30
+
+  codeql-analysis:
+    runs-on: ubuntu-latest
+    if: github.event_name != 'schedule'  # Manuel çalıştırmada sadece
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18.x'
+        cache: 'npm'
+        cache-dependency-path: package-lock.json
+    
+    - name: Install dependencies
+      run: npm ci
+    
+    - name: Checkout CodeQL
+      uses: actions/checkout@v4
+      with:
+        repository: github/codeql-action
+        ref: v2
+    
+    - name: Perform CodeQL Analysis
+      uses: github/codeql-action/init@v2
+      with:
+        languages: ${{ matrix.language }}
+    
+    - name: Perform CodeQL Analysis
+      uses: github/codeql-action/perform-analysis@v2
+      with:
+        category: security
+    
+    - name: Upload CodeQL results
+      uses: actions/upload-artifact@v3
+      if: always()
+      with:
+        name: codeql-results
+        path: codeql-results/
+        retention-days: 30
+
+  secret-detection:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18.x'
+        cache: 'npm'
+        cache-dependency-path: package-lock.json
+    
+    - name: Install dependencies
+      run: npm ci
+    
+    - name: Run TruffleHog
+      uses: trufflesecurity/trufflehog@main
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        path: ./
+        base64: true
+    
+    - name: Upload secret detection results
+      uses: actions/upload-artifact@v3
+      if: always()
+      with:
+        name: secret-detection-results
+        path: trufflehog.json
+        retention-days: 30
+
+  security-report:
+    runs-on: ubuntu-latest
+    needs: [security-audit, snyk-vulnerability-scan, dependency-check, codeql-analysis, secret-detection]
+    
+    steps:
+    - name: Generate security summary
+      run: |
+        echo "## Security Scan Summary" >> $GITHUB_STEP_SUMMARY
+        echo "- npm audit: Completed" >> $GITHUB_STEP_SUMMARY
+        echo "- Snyk scan: Completed" >> $GITHUB_STEP_SUMMARY
+        echo "- Dependency check: Completed" >> $GITHUB_STEP_SUMMARY
+        echo "- CodeQL analysis: Completed" >> $GITHUB_STEP_SUMMARY
+        echo "- Secret detection: Completed" >> $GITHUB_STEP_SUMMARY
+    
+    - name: Upload security summary
+      uses: actions/upload-artifact@v3
+      with:
+        name: security-summary
+        path: security-summary.md
+        retention-days: 30

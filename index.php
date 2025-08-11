@@ -1,0 +1,187 @@
+<?php
+header('Content-Type: text/html; charset=utf-8');
+?>
+<!DOCTYPE html>
+<html lang="tr" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Türkiye Deprem Takip Sistemi</title>
+    
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-3HXXT7Q4TZ"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-3HXXT7Q4TZ');
+    </script>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="assets/css/style.css">
+</head>
+
+<body class="bg-gray-100 font-sans">
+    <!-- Navbar -->
+    <nav class="bg-white shadow-lg h-16">
+        <div class="max-w-full mx-auto px-4 h-full">
+            <div class="flex justify-between items-center h-full">
+                <div class="flex items-center">
+                    <h1 class="text-xl font-bold text-gray-800">Türkiye Deprem Takip Sistemi</h1>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="flex flex-col lg:flex-row h-[calc(100vh-104px)]">
+        <!-- Harita - Mobil ve Tablet için üstte -->
+        <div class="w-full lg:w-1/2 p-4 order-1 lg:order-2">
+            <div class="bg-white rounded-lg shadow-lg overflow-hidden h-full">
+                <div id="map" class="rounded-lg h-full"></div>
+            </div>
+        </div>
+
+        <!-- Sağ Kolon - İstatistik Kartları ve Deprem Listesi -->
+        <div class="w-full lg:w-1/2 p-4 order-2 lg:order-1 overflow-hidden flex flex-col gap-4">
+            <!-- En Yakın Deprem Kartı -->
+            <div class="stats-card p-6">
+                <div class="flex items-start justify-between">
+                    <div class="flex-1">
+                        <div class="stats-title">En Yakın Deprem</div>
+                        <div class="counter" id="nearest-magnitude">-</div>
+                        <div class="stats-subtitle">
+                            <span id="nearest-distance">-</span> km uzaklıkta
+                        </div>
+                        <div class="text-sm mt-3 space-y-1">
+                            <div><strong>Yer:</strong> <span id="nearest-location">-</span></div>
+                            <div><strong>Şehir:</strong> <span id="nearest-city">-</span></div>
+                            <div><strong>Tarih:</strong> <span id="nearest-datetime">-</span></div>
+                        </div>
+                    </div>
+                    <div class="icon-container icon-primary ml-4">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Deprem Listesi - Mobil ve Tablet için altta -->
+            <div class="bg-white rounded-lg shadow-lg overflow-hidden flex-1 flex flex-col">
+                <div class="p-4 border-b flex justify-between items-center">
+                    <h2 class="text-xl font-bold text-gray-900">Son Depremler</h2>
+                    <div class="text-sm text-gray-500">
+                        Güncelleme: <span id="countdown">60</span> saniye
+                    </div>
+                </div>
+                
+                <!-- Filtreleme -->
+                <div class="p-4 border-b bg-gray-50">
+                    <!-- Desktop için filtreleme -->
+                    <div class="hidden md:flex flex-wrap gap-4">
+                        <div class="flex-1 min-w-[200px]">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Minimum Büyüklük</label>
+                            <select id="minMagnitude" class="w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500">
+                                <option value="0">Tümü</option>
+                                <option value="3">3.0+</option>
+                                <option value="4">4.0+</option>
+                                <option value="5">5.0+</option>
+                            </select>
+                        </div>
+                        <div class="flex-1 min-w-[200px]">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Şehir</label>
+                            <select id="cityFilter" class="w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500">
+                                <option value="">Tümü</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Mobil için hızlı filtreler -->
+                    <div class="md:hidden flex items-center justify-between">
+                        <h3 class="text-sm font-medium text-gray-700">Son Depremler</h3>
+                        <div class="flex items-center space-x-2">
+                            <span class="text-xs text-gray-500">Güncelleme:</span>
+                            <span id="countdown" class="text-xs font-medium text-blue-600">60</span>
+                            <span class="text-xs text-gray-500">sn</span>
+                        </div>
+                    </div>
+
+                    <!-- Otomatik Güncelleme Kontrolleri -->
+                    <div class="mt-4 p-3 bg-white rounded-lg border">
+                        <div class="flex items-center justify-between mb-2">
+                            <label class="flex items-center cursor-pointer">
+                                <div class="relative">
+                                    <input type="checkbox" id="autoUpdate" class="sr-only" checked>
+                                    <div class="block bg-gray-300 w-14 h-8 rounded-full"></div>
+                                    <div class="dot absolute left-1 top-1 bg-white w-6 h-6 rounded-full transition"></div>
+                                </div>
+                                <div class="ml-3 text-sm font-medium text-gray-700">Otomatik Güncelleme</div>
+                            </label>
+                            <div class="text-sm text-gray-500">
+                                <span id="countdown">120</span> saniye
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <label class="text-xs text-gray-600">Güncelleme Sıklığı:</label>
+                            <select id="updateFrequency" class="text-xs border border-gray-300 rounded px-2 py-1">
+                                <option value="120" selected>120 saniye</option>
+                                <option value="300">300 saniye</option>
+                                <option value="600">600 saniye</option>
+                                <option value="900">900 saniye</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Deprem Tablosu -->
+                <div class="flex-1 overflow-auto custom-scrollbar">
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-50 sticky top-0">
+                                <tr>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Büyüklük</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Derinlik</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Yer</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Şehir</th>
+                                </tr>
+                            </thead>
+                            <tbody id="quakeList" class="bg-white divide-y divide-gray-200">
+                                <!-- JavaScript ile doldurulacak -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t">
+        <div class="max-w-full mx-auto px-4 py-2">
+            <div class="flex flex-col md:flex-row justify-between items-center space-y-2 md:space-y-0">
+                <p class="text-sm text-gray-500 text-center md:text-left">
+                    &copy; 2025 Türkiye Deprem Takip Ekibi | Açık Kaynak Proje
+                </p>
+                <div class="text-center md:text-right">
+                    <p class="text-xs text-gray-500">
+                        Bu uygulama açık kaynak bir projedir. Ticari amaçla kullanılamaz. 
+                        Veriler Kandilli Rasathanesi'nden alınmaktadır.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="assets/js/app.js"></script>
+    <script src="test_auto_update.js"></script>
+</body>
+</html>

@@ -1,0 +1,828 @@
+/* İstatistik Kartları İçin Özel Stiller */
+
+/* Ana Kart Tasarımı */
+.stats-card {
+    background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+    border-radius: 16px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    border: 1px solid rgba(226, 232, 240, 0.8);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.stats-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #3b82f6, #8b5cf6, #ec4899);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.3s ease;
+}
+
+.stats-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+.stats-card:hover::before {
+    transform: scaleX(1);
+}
+
+/* Dark Mode Kartları */
+.dark .stats-card {
+    background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
+    border: 1px solid rgba(75, 85, 99, 0.8);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
+}
+
+.dark .stats-card::before {
+    background: linear-gradient(90deg, #60a5fa, #a78bfa, #f472b6);
+}
+
+.dark .counter {
+    background: linear-gradient(135deg, #f3f4f6, #e5e7eb);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.dark .stats-title {
+    color: #9ca3af;
+}
+
+.dark .stats-subtitle {
+    color: #6b7280;
+}
+
+.dark .text-gray-900 {
+    color: #f3f4f6;
+}
+
+.dark .depth-indicator {
+    background: #374151;
+}
+
+.dark .region-dot {
+    background: #60a5fa;
+}
+
+.dark .star.empty {
+    color: #4b5563;
+}
+
+.dark .star:not(.empty) {
+    color: #fbbf24;
+}
+
+/* Dark mode hover efektleri */
+.dark .stats-card:hover {
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.4), 0 10px 10px -5px rgba(0, 0, 0, 0.3);
+}
+
+.dark .stats-card:hover::before {
+    background: linear-gradient(90deg, #93c5fd, #c4b5fd, #f9a8d4);
+}
+
+/* İkon Konteyneri */
+.icon-container {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    margin-bottom: 16px;
+    position: relative;
+    overflow: hidden;
+}
+
+.icon-container::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transform: translateX(-100%);
+    transition: transform 0.6s;
+}
+
+.stats-card:hover .icon-container::after {
+    transform: translateX(100%);
+}
+
+/* Farklı İkon Renkleri */
+.icon-primary {
+    background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+    color: white;
+}
+
+.icon-secondary {
+    background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+    color: white;
+}
+
+.icon-success {
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: white;
+}
+
+.icon-warning {
+    background: linear-gradient(135deg, #f59e0b, #d97706);
+    color: white;
+}
+
+/* Sayım Animasyonu */
+.counter {
+    font-size: 2.5rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, #1f2937, #374151);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1;
+    position: relative;
+}
+
+.dark .counter {
+    background: linear-gradient(135deg, #f3f4f6, #e5e7eb);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.counter::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+    animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+    0% { left: -100%; }
+    100% { left: 100%; }
+}
+
+/* Mini Grafik Konteyner */
+.mini-chart {
+    height: 60px;
+    margin-top: 12px;
+    position: relative;
+}
+
+/* Yıldız Derecelendirme */
+.star-rating {
+    display: flex;
+    gap: 2px;
+    margin-top: 8px;
+}
+
+.star {
+    color: #fbbf24;
+    font-size: 16px;
+    transition: all 0.2s ease;
+}
+
+.star.empty {
+    color: #d1d5db;
+}
+
+.dark .star.empty {
+    color: #4b5563;
+}
+
+/* Derinlik Göstergesi */
+.depth-indicator {
+    width: 100%;
+    height: 8px;
+    background: #e5e7eb;
+    border-radius: 4px;
+    overflow: hidden;
+    margin-top: 8px;
+    position: relative;
+}
+
+.dark .depth-indicator {
+    background: #374151;
+}
+
+.depth-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #10b981, #059669);
+    border-radius: 4px;
+    transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+}
+
+.depth-fill::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    animation: depthShimmer 2s infinite;
+}
+
+@keyframes depthShimmer {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+}
+
+/* Aktif Bölgeler Göstergesi */
+.regions-indicator {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-top: 8px;
+}
+
+.region-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #3b82f6;
+    animation: regionPulse 2s infinite;
+}
+
+@keyframes regionPulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.6; transform: scale(1.2); }
+}
+
+/* Kart Başlıkları */
+.stats-title {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #6b7280;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 4px;
+}
+
+.dark .stats-title {
+    color: #9ca3af;
+}
+
+/* Kart Alt Başlıkları */
+.stats-subtitle {
+    font-size: 0.875rem;
+    color: #9ca3af;
+    margin-top: 4px;
+}
+
+.dark .stats-subtitle {
+    color: #6b7280;
+}
+
+/* Sağ taraftaki bilgiler için özel stil */
+.stats-card .text-right .text-sm,
+.stats-card .text-right .text-xs,
+.stats-card .text-right .font-semibold {
+    font-size: 0.875rem !important;
+    line-height: 1.25;
+}
+
+/* En Yakın Deprem kartındaki mesafe bilgisi */
+#nearest-distance {
+    font-size: 1rem !important;
+    font-weight: 600 !important;
+    color: #1f2937 !important;
+}
+
+.dark #nearest-distance {
+    color: #f3f4f6 !important;
+}
+
+/* En Yakın Deprem kartındaki diğer bilgiler */
+#nearest-location,
+#nearest-city,
+#nearest-datetime {
+    font-size: 0.875rem !important;
+    font-weight: 500 !important;
+}
+
+/* Gündüz/Gece bilgileri */
+.stats-card .text-xs {
+    font-size: 0.875rem !important;
+}
+
+/* Son 24 Saat Aktivitesi kartındaki sayısal değerler */
+#counter-24h,
+#counter-24h-day,
+#counter-24h-night {
+    font-size: 1.125rem !important;
+    font-weight: 600 !important;
+}
+
+/* Son 24 Saat Aktivitesi kartındaki etiketler */
+.stats-card .text-gray-600.dark\\:text-gray-400 {
+    font-size: 0.875rem !important;
+    font-weight: 500 !important;
+}
+
+/* Son 24 Saat Aktivitesi kartındaki saat bilgileri */
+.stats-card .text-gray-700.dark\\:text-gray-300 {
+    font-size: 0.875rem !important;
+    font-weight: 500 !important;
+}
+
+/* Son 24 Saat Aktivitesi kartındaki gündüz/gece etiketleri */
+.stats-card .text-xs {
+    font-size: 0.8125rem !important;
+    font-weight: 500 !important;
+    color: #6b7280 !important;
+}
+
+.dark .stats-card .text-xs {
+    color: #9ca3af !important;
+}
+
+/* Büyüklük dağılımı kartındaki Max bilgisi */
+#max-magnitude {
+    font-size: 1.125rem !important;
+    font-weight: 700 !important;
+    color: #1f2937 !important;
+}
+
+.dark #max-magnitude {
+    color: #f3f4f6 !important;
+}
+
+/* Büyüklük dağılımı kartındaki diğer sayısal değerler */
+#counter-magnitude {
+    font-size: 1.25rem !important;
+    font-weight: 600 !important;
+}
+
+/* Büyüklük dağılımı bar etiketleri */
+.magnitude-bar .text-xs {
+    font-size: 0.875rem !important;
+    font-weight: 500 !important;
+    color: #6b7280 !important;
+}
+
+.dark .magnitude-bar .text-xs {
+    color: #9ca3af !important;
+}
+
+/* Büyüklük dağılımı sayıları */
+.magnitude-bar > div:last-child {
+    font-size: 0.875rem !important;
+    font-weight: 600 !important;
+    color: #374151 !important;
+}
+
+.dark .magnitude-bar > div:last-child {
+    color: #f3f4f6 !important;
+}
+
+/* Derinlik dağılımı kartındaki bilgiler */
+#counter-depth-max,
+#counter-depth-avg,
+#counter-depth-total {
+    font-size: 1.125rem !important;
+    font-weight: 600 !important;
+}
+
+/* Bölgesel aktivite kartındaki bilgiler */
+#most-active-region,
+#most-active-count {
+    font-size: 0.875rem !important;
+    font-weight: 500 !important;
+}
+
+/* En aktif 5 bölge başlığı */
+.stats-card .text-sm.font-medium {
+    font-size: 0.875rem !important;
+    font-weight: 600 !important;
+}
+
+/* Animasyonlu Giriş */
+@keyframes slideInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.stats-card {
+    animation: slideInUp 0.6s ease-out forwards;
+}
+
+.stats-card:nth-child(1) { animation-delay: 0.1s; }
+.stats-card:nth-child(2) { animation-delay: 0.2s; }
+.stats-card:nth-child(3) { animation-delay: 0.3s; }
+.stats-card:nth-child(4) { animation-delay: 0.4s; }
+
+/* Responsive Tasarım */
+@media (max-width: 768px) {
+    .stats-card {
+        margin-bottom: 12px;
+        padding: 12px;
+    }
+    
+    .counter-value {
+        font-size: 1.875rem !important;
+    }
+    
+    .icon-container {
+        width: 36px;
+        height: 36px;
+        font-size: 18px;
+        margin-bottom: 12px;
+    }
+    
+    .stats-title {
+        font-size: 0.8125rem;
+    }
+    
+    .stats-subtitle {
+        font-size: 0.8125rem;
+    }
+    
+    .regions-indicator {
+        gap: 2px;
+    }
+    
+    .region-dot {
+        width: 6px;
+        height: 6px;
+    }
+    
+    /* Mobilde sağ taraftaki bilgiler */
+    .stats-card .text-right .text-sm,
+    .stats-card .text-right .text-xs,
+    .stats-card .text-right .font-semibold {
+        font-size: 0.875rem !important;
+    }
+    
+    /* Mobilde En Yakın Deprem mesafe bilgisi */
+    #nearest-distance {
+        font-size: 1rem !important;
+    }
+    
+    /* Mobilde diğer metinler */
+    #nearest-location,
+    #nearest-city,
+    #nearest-datetime {
+        font-size: 0.875rem !important;
+    }
+    
+    /* Mobilde gündüz/gece bilgileri */
+    .stats-card .text-xs {
+        font-size: 0.875rem !important;
+    }
+    
+    /* Mobilde büyüklük dağılımı bilgileri */
+    #max-magnitude {
+        font-size: 1rem !important;
+    }
+    
+    /* Mobilde büyüklük dağılımı diğer sayısal değerler */
+    #counter-magnitude {
+        font-size: 1.125rem !important;
+    }
+    
+    /* Mobilde büyüklük dağılımı bar etiketleri */
+    .magnitude-bar .text-xs {
+        font-size: 0.8125rem !important;
+    }
+    
+    /* Mobilde büyüklük dağılımı sayıları */
+    .magnitude-bar > div:last-child {
+        font-size: 0.8125rem !important;
+    }
+    
+    /* Mobilde Son 24 Saat Aktivitesi sayısal değerler */
+    #counter-24h,
+    #counter-24h-day,
+    #counter-24h-night {
+        font-size: 1rem !important;
+    }
+    
+    /* Mobilde derinlik bilgileri */
+    #counter-depth-max,
+    #counter-depth-avg,
+    #counter-depth-total {
+        font-size: 1rem !important;
+    }
+    
+    /* Mobilde bölgesel aktivite bilgileri */
+    #most-active-region,
+    #most-active-count {
+        font-size: 0.875rem !important;
+    }
+    
+    /* Mobilde en aktif 5 bölge başlığı */
+    .stats-card .text-sm.font-medium {
+        font-size: 0.875rem !important;
+    }
+}
+
+/* Tablet için */
+@media (min-width: 769px) and (max-width: 1024px) {
+    .stats-card {
+        padding: 16px;
+    }
+    
+    .counter-value {
+        font-size: 2rem !important;
+    }
+    
+    /* Tabletde sağ taraftaki bilgiler */
+    .stats-card .text-right .text-sm,
+    .stats-card .text-right .text-xs,
+    .stats-card .text-right .font-semibold {
+        font-size: 0.875rem !important;
+    }
+    
+    /* Tabletde En Yakın Deprem mesafe bilgisi */
+    #nearest-distance {
+        font-size: 1rem !important;
+    }
+    
+    /* Tabletde diğer metinler */
+    #nearest-location,
+    #nearest-city,
+    #nearest-datetime {
+        font-size: 0.875rem !important;
+    }
+    
+    /* Tabletde gündüz/gece bilgileri */
+    .stats-card .text-xs {
+        font-size: 0.875rem !important;
+    }
+    
+    /* Tabletde büyüklük dağılımı bilgileri */
+    #max-magnitude {
+        font-size: 1rem !important;
+    }
+    
+    /* Tabletde büyüklük dağılımı diğer sayısal değerler */
+    #counter-magnitude {
+        font-size: 1.125rem !important;
+    }
+    
+    /* Tabletde büyüklük dağılımı bar etiketleri */
+    .magnitude-bar .text-xs {
+        font-size: 0.875rem !important;
+    }
+    
+    /* Tabletde büyüklük dağılımı sayıları */
+    .magnitude-bar > div:last-child {
+        font-size: 0.875rem !important;
+    }
+    
+    /* Tabletde Son 24 Saat Aktivitesi sayısal değerler */
+    #counter-24h,
+    #counter-24h-day,
+    #counter-24h-night {
+        font-size: 1.125rem !important;
+    }
+    
+    /* Tabletde derinlik bilgileri */
+    #counter-depth-max,
+    #counter-depth-avg,
+    #counter-depth-total {
+        font-size: 1.125rem !important;
+    }
+    
+    /* Tabletde bölgesel aktivite bilgileri */
+    #most-active-region,
+    #most-active-count {
+        font-size: 0.875rem !important;
+    }
+    
+    /* Tabletde en aktif 5 bölge başlığı */
+    .stats-card .text-sm.font-medium {
+        font-size: 0.875rem !important;
+    }
+}
+
+/* Masaüstü için büyük ekranlar */
+@media (min-width: 1920px) {
+    .stats-card {
+        padding: 24px;
+    }
+    
+    .counter-value {
+        font-size: 3rem !important;
+    }
+    
+    .icon-container {
+        width: 56px;
+        height: 56px;
+        font-size: 28px;
+    }
+}
+
+/* Hover Efektleri */
+.stats-card:hover .counter {
+    transform: scale(1.05);
+    transition: transform 0.2s ease;
+}
+
+.stats-card:hover .star {
+    transform: scale(1.1);
+}
+
+/* Yüklenme Animasyonu */
+.loading-skeleton {
+    background: linear-gradient(90deg, #f3f4f6 25%, #e5e7eb 50%, #f3f4f6 75%);
+    background-size: 200% 100%;
+    animation: loading 1.5s infinite;
+}
+
+@keyframes loading {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
+
+/* Gradient Metin Efekti */
+.gradient-text {
+    background: linear-gradient(135deg, #3b82f6, #8b5cf6, #ec4899);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-weight: 600;
+}
+
+/* Micro-interactions */
+.stats-card {
+    cursor: pointer;
+}
+
+.stats-card:active {
+    transform: translateY(-2px) scale(0.98);
+}
+
+/* Özel Scrollbar İçin */
+.stats-container::-webkit-scrollbar {
+    width: 6px;
+}
+
+.stats-container::-webkit-scrollbar-track {
+    background: #f1f5f9;
+    border-radius: 3px;
+}
+
+.dark .stats-container::-webkit-scrollbar-track {
+    background: #1e293b;
+}
+
+.stats-container::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 3px;
+}
+
+.dark .stats-container::-webkit-scrollbar-thumb {
+    background: #475569;
+}
+
+.stats-container::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+}
+
+.dark .stats-container::-webkit-scrollbar-thumb:hover {
+    background: #64748b;
+}
+
+/* DERINLİK BAR CHART İÇİN ÖZEL CSS KURALLARI */
+.depth-bars {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.25rem;
+    margin-top: 0.5rem;
+}
+
+.depth-bar {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.depth-bar > div:first-child {
+    /* height: 3rem; */ /* Bu kuralı yorum satırı yapıyoruz */
+    width: 100%;
+    background-color: #f3f4f6;
+    border-radius: 0.25rem;
+    position: relative;
+    overflow: hidden;
+    border: 1px solid #e5e7eb;
+    z-index: 2; /* z-index'i artırıyoruz */
+    box-sizing: border-box;
+    display: block;
+    visibility: visible;
+    opacity: 1;
+    transform: none;
+    pointer-events: auto;
+}
+
+.dark .depth-bar > div:first-child {
+    background-color: #374151;
+    border-color: #4b5563;
+}
+
+/* Derinlik bar'ları için özel renkler - CSS ile tanımlı */
+/* JavaScript tarafından stil atandığında bu kuralların önceliği düşürülebilir */
+.depth-bars #depth-0-10 {
+    background-color: #10B981; /* Yeşil */
+}
+
+.depth-bars #depth-10-30 {
+    background-color: #F59E0B; /* Sarı */
+}
+
+.depth-bars #depth-30-70 {
+    background-color: #F97316; /* Turuncu */
+}
+
+.depth-bars #depth-70plus {
+    background-color: #EF4444; /* Kırmızı */
+}
+
+/* Dark mode için renkler (CSS ile tanımlı) */
+.dark .depth-bars #depth-0-10 {
+    background-color: #10B981;
+}
+
+.dark .depth-bars #depth-10-30 {
+    background-color: #F59E0B;
+}
+
+.dark .depth-bars #depth-30-70 {
+    background-color: #F97316;
+}
+
+.dark .depth-bars #depth-70plus {
+    background-color: #EF4444;
+}
+
+/* Sayı etiketleri için */
+.depth-bar > div:last-child {
+    margin-top: 0.25rem;
+    font-weight: 600;
+    color: #374151;
+    font-size: 0.875rem;
+}
+
+.dark .depth-bar > div:last-child {
+    color: #f3f4f6;
+}
+
+
+
+/* SAATLİK SAYI KUTULARI İÇİN CSS KURALLARI */
+.hourly-bars {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 0.25rem;
+    margin-top: 0.5rem;
+}
+
+.hourly-bar {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+/* Mobilde saatlik kutular */
+@media (max-width: 768px) {
+    .hourly-bars {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 0.125rem;
+    }
+    
+    .hourly-bar .text-xs {
+        font-size: 0.75rem !important;
+    }
+}
+
+/* Tablet için saatlik kutular */
+@media (min-width: 769px) and (max-width: 1024px) {
+    .hourly-bars {
+        grid-template-columns: repeat(6, 1fr);
+        gap: 0.25rem;
+    }
+}

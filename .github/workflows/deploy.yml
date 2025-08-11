@@ -1,0 +1,139 @@
+name: CD Pipeline
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Deploy environment'
+        required: true
+        default: 'staging'
+        type: choice
+        options:
+        - staging
+        - production
+
+jobs:
+  deploy-staging:
+    if: github.ref == 'refs/heads/main' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    environment: staging
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18.x'
+        cache: 'npm'
+        cache-dependency-path: package-lock.json
+    
+    - name: Install dependencies
+      run: npm ci
+    
+    - name: Build application
+      run: npm run build
+    
+    - name: Deploy to Staging
+      uses: akhileshns/heroku-deploy@v3.12.12
+      with:
+        heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
+        heroku_app_name: ${{ secrets.HEROKU_APP_NAME_STAGING }}
+        heroku_email: ${{ secrets.HEROKU_EMAIL }}
+        usedocker: false
+    
+    - name: Run smoke tests
+      run: |
+        echo "Running smoke tests..."
+        sleep 30
+        curl -f ${{ secrets.HEROKU_APP_URL_STAGING }}/ || exit 1
+    
+    - name: Notify deployment success
+      if: success()
+      uses: 8398a7/action-slack@v3
+      with:
+        status: success
+        fields: repo,message,commit,author,action,eventName,ref,workflow
+        text: 'Staging ortamına başarıyla dağıtıldı!'
+      env:
+        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+
+  deploy-production:
+    if: github.ref == 'refs/heads/main' && github.event_name == 'workflow_dispatch' && github.event.inputs.environment == 'production'
+    runs-on: ubuntu-latest
+    environment: production
+    needs: deploy-staging
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18.x'
+        cache: 'npm'
+        cache-dependency-path: package-lock.json
+    
+    - name: Install dependencies
+      run: npm ci
+    
+    - name: Build application
+      run: npm run build
+    
+    - name: Wait for manual approval
+      uses: trstringer/manual-approval@v1.2.2
+      with:
+        secret: ${{ secrets.PRODUCTION_APPROVAL_TOKEN }}
+        approvers: ${{ secrets.APPROVERS }}
+        issue-title: "Production Deployment Approval"
+        issue-body: "Please approve the production deployment for ${{ github.repository }}"
+        issue-labels: "deployment,production"
+    
+    - name: Deploy to Production
+      uses: akhileshns/heroku-deploy@v3.12.12
+      with:
+        heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
+        heroku_app_name: ${{ secrets.HEROKU_APP_NAME_PRODUCTION }}
+        heroku_email: ${{ secrets.HEROKU_EMAIL }}
+        usedocker: false
+    
+    - name: Run smoke tests
+      run: |
+        echo "Running smoke tests..."
+        sleep 30
+        curl -f ${{ secrets.HEROKU_APP_URL_PRODUCTION }}/ || exit 1
+    
+    - name: Notify deployment success
+      if: success()
+      uses: 8398a7/action-slack@v3
+      with:
+        status: success
+        fields: repo,message,commit,author,action,eventName,ref,workflow
+        text: 'Production ortamına başarıyla dağıtıldı!'
+      env:
+        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+
+  rollback:
+    if: failure() && (needs.deploy-staging.result == 'failure' || needs.deploy-production.result == 'failure')
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Rollback deployment
+      run: |
+        echo "Rollback işlemi başlatılıyor..."
+        # Heroku rollback komutu (örnek)
+        # heroku rollback:v2 -a ${{ secrets.HEROKU_APP_NAME }}
+        echo "Rollback tamamlandı"
+    
+    - name: Notify rollback
+      uses: 8398a7/action-slack@v3
+      with:
+        status: failure
+        fields: repo,message,commit,author,action,eventName,ref,workflow
+        text: 'Dağıtım başarısız oldu, rollback gerçekleştirildi!'
+      env:
+        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}

@@ -1,0 +1,134 @@
+{
+  "documentation": {
+    "api": {
+      "path": "docs/api/README.md",
+      "description": "API dokümantasyonu ve endpoint'leri",
+      "aliases": ["api-docs", "endpoint", "rest-api"]
+    },
+    "getting-started": {
+      "path": "docs/guides/GETTING_STARTED.md",
+      "description": "Projeye başlangıç kılavuzu",
+      "aliases": ["başlangıç", "setup", "kurulum"]
+    },
+    "development": {
+      "path": "docs/guides/DEVELOPMENT.md",
+      "description": "Geliştirme kılavuzu ve ortam kurulumu",
+      "aliases": ["geliştirme", "dev", "development-guide"]
+    },
+    "architecture": {
+      "path": "docs/architecture/OVERVIEW.md",
+      "description": "Mimari genel bakış",
+      "aliases": ["mimari", "architecture", "overview"]
+    },
+    "status": {
+      "path": "docs/status/DEVELOPMENT_STATUS.md",
+      "description": "Geliştirme durumu ve proje takibi",
+      "aliases": ["durum", "status", "dashboard"]
+    }
+  },
+  "code": {
+    "main": {
+      "path": "index.js",
+      "description": "Ana uygulama dosyası (Express server)",
+      "aliases": ["app", "server", "main"]
+    },
+    "api-php": {
+      "path": "api/index.php",
+      "description": "PHP API endpoint'i",
+      "aliases": ["php-api", "backend-php", "api-php"]
+    },
+    "views": {
+      "path": "views/index.ejs",
+      "description": "Ana EJS template dosyası",
+      "aliases": ["template", "view", "frontend"]
+    },
+    "styles": {
+      "path": "tailwind.config.js",
+      "description": "Tailwind CSS yapılandırması",
+      "aliases": ["tailwind", "css", "styles"]
+    },
+    "assets": {
+      "path": "assets/",
+      "description": "Statik dosyalar (CSS, JS, resimler)",
+      "aliases": ["static", "public", "resources"]
+    }
+  },
+  "config": {
+    "package": {
+      "path": "package.json",
+      "description": "Node.js paket yapılandırması",
+      "aliases": ["npm", "dependencies", "scripts"]
+    },
+    "gitignore": {
+      "path": ".gitignore",
+      "description": "Git tarafından göz ardı edilecek dosyalar",
+      "aliases": ["git", "ignore", "version-control"]
+    },
+    "docker": {
+      "path": "Dockerfile",
+      "description": "Docker container yapılandırması",
+      "aliases": ["docker", "container", "deployment"]
+    },
+    "docker-compose": {
+      "path": "docker-compose.yml",
+      "description": "Docker servis yapılandırması",
+      "aliases": ["docker-compose", "compose", "orchestration"]
+    }
+  },
+  "tests": {
+    "unit": {
+      "path": "tests/unit/",
+      "description": "Birim testleri",
+      "aliases": ["unit-tests", "test-unit", "testing"]
+    },
+    "integration": {
+      "path": "tests/integration/",
+      "description": "Entegrasyon testleri",
+      "aliases": ["integration-tests", "test-integration", "e2e"]
+    },
+    "fixtures": {
+      "path": "tests/fixtures/",
+      "description": "Test verileri ve örnekler",
+      "aliases": ["test-data", "fixtures", "mocks"]
+    }
+  },
+  "logs": {
+    "error": {
+      "path": "logs/error.log",
+      "description": "Hata log dosyası",
+      "aliases": ["error-log", "logs-error", "error-logs"]
+    },
+    "combined": {
+      "path": "logs/combined.log",
+      "description": "Birleşik log dosyası",
+      "aliases": ["combined-log", "logs-combined", "app-logs"]
+    }
+  },
+  "docs": {
+    "kiro": {
+      "path": "kiro/",
+      "description": "Proje yönetimi ve talimatlar",
+      "aliases": ["kiro", "commands", "management"]
+    },
+    "api-docs": {
+      "path": "docs/api/",
+      "description": "API dokümantasyonu",
+      "aliases": ["api", "rest-api", "documentation"]
+    },
+    "guides": {
+      "path": "docs/guides/",
+      "description": "Kılavuzlar ve rehberler",
+      "aliases": ["guides", "howto", "tutorials"]
+    },
+    "architecture": {
+      "path": "docs/architecture/",
+      "description": "Mimari dokümantasyon",
+      "aliases": ["architecture", "design", "structure"]
+    },
+    "status": {
+      "path": "docs/status/",
+      "description": "Proje durumu ve takip",
+      "aliases": ["status", "dashboard", "progress"]
+    }
+  }
+}
