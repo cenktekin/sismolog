@@ -110,3 +110,15 @@ public
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
+.vercel
+
+# Development tools and configuration
+.kiro/
+.github/secrets-setup.md
+docs/
+
+# Test files (development only)
+test_auto_update.js
+test_depth_api.js
+test_depth_debug.js
+ALIAS_MAP.json
