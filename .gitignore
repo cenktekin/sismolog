@@ -122,3 +122,4 @@ test_auto_update.js
 test_depth_api.js
 test_depth_debug.js
 ALIAS_MAP.json
+server.log
