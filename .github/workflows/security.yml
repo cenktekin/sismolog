@@ -34,7 +34,7 @@ jobs:
       run: npm audit --json > npm-audit-report.json
     
     - name: Upload npm audit report
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       if: always()
       with:
         name: npm-audit-report
@@ -68,7 +68,7 @@ jobs:
         command: test
     
     - name: Upload Snyk scan results
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       if: always()
       with:
         name: snyk-scan-results
@@ -104,7 +104,7 @@ jobs:
       continue-on-error: true
     
     - name: Upload dependency check report
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       if: always()
       with:
         name: dependency-check-report
@@ -146,7 +146,7 @@ jobs:
         category: security
     
     - name: Upload CodeQL results
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       if: always()
       with:
         name: codeql-results
@@ -179,7 +179,7 @@ jobs:
         base64: true
     
     - name: Upload secret detection results
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       if: always()
       with:
         name: secret-detection-results
@@ -201,7 +201,7 @@ jobs:
         echo "- Secret detection: Completed" >> $GITHUB_STEP_SUMMARY
     
     - name: Upload security summary
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: security-summary
         path: security-summary.md
