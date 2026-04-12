@@ -64,6 +64,7 @@ jobs:
     
     - name: Commit formatted files
       uses: stefanzweifel/git-auto-commit-action@v4
+      continue-on-error: true
       with:
         commit_message: 'style: format code with Prettier'
         file_pattern: 'index.js'
@@ -89,7 +90,7 @@ jobs:
       run: npm install -g plato
     
     - name: Run complexity analysis
-      run: plato -r -d complexity-report -t "Türkiye Deprem Takip Sistemi" -l js index.js
+      run: plato -r -d complexity-report -t "Türkiye Deprem Takip Sistemi" index.js
       continue-on-error: true
     
     - name: Upload complexity report
