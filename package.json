@@ -6,7 +6,9 @@
   "scripts": {
     "start": "node index.js",
     "build": "tailwindcss -i ./src/input.css -o ./public/assets/css/style.css --watch",
-    "dev": "nodemon index.js"
+    "dev": "nodemon index.js",
+    "test": "echo \"No tests configured\"",
+    "test:coverage": "echo \"Coverage not configured\""
   },
   "dependencies": {
     "dotenv": "^16.3.1",
