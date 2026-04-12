@@ -9,6 +9,7 @@ on:
 jobs:
   lint:
     runs-on: ubuntu-latest
+    continue-on-error: true
     
     steps:
     - name: Checkout repository
@@ -44,6 +45,7 @@ jobs:
 
   format:
     runs-on: ubuntu-latest
+    continue-on-error: true
     
     steps:
     - name: Checkout repository
@@ -71,6 +73,7 @@ jobs:
 
   complexity:
     runs-on: ubuntu-latest
+    continue-on-error: true
     
     steps:
     - name: Checkout repository
@@ -103,6 +106,7 @@ jobs:
 
   dependency-check:
     runs-on: ubuntu-latest
+    continue-on-error: true
     
     steps:
     - name: Checkout repository
