@@ -123,3 +123,8 @@ test_depth_api.js
 test_depth_debug.js
 ALIAS_MAP.json
 server.log
+
+# Project template files (auto-generated)
+* - Genel Bakış.md
+* - Günlük Notlar.md
+* - Geliştirme Fikirleri.md
