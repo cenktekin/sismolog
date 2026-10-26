@@ -1,147 +1,99 @@
-# Sismolog - Türkiye Deprem Takip Sistemi
+# Sismolog — Türkiye Deprem Takip Sistemi
 
-Bu proje, Türkiye'deki deprem verilerini gerçek zamanlı olarak takip etmek ve görselleştirmek için geliştirilmiş bir web uygulamasıdır.
+Kandilli Rasathanesi'nin kamuya açık deprem listesini çekip harita, liste ve istatistik kartlarıyla gösteren küçük bir Node.js/Express uygulaması.
 
-## Canlı Demo
+**Canlı:** https://sismolog-fj13lgl4o-cenktekins-projects.vercel.app
 
-Projeyi canlı olarak test edebilirsiniz: [https://sismolog-fj13lgl4o-cenktekins-projects.vercel.app](https://sismolog-fj13lgl4o-cenktekins-projects.vercel.app)
-
-![Sismolog Uygulaması Ekran Görüntüsü](sismolog-fj13lgl4o-cenktekins-projects.vercel.app.png)
+![Sismolog ekran görüntüsü](docs/images/screenshot.png)
 
 ## Özellikler
 
-- Kandilli Rasathanesi'nden gerçek zamanlı deprem verileri
-- Harita üzerinde deprem konumlarını görselleştirme
-- Deprem verilerini filtreleme (büyüklük, şehir, tarih vb.)
-- Responsive tasarım
-- API endpoints ile veri erişimi
+- Son depremler: son 500 kayıt, Leaflet haritasında büyüklüğe göre renkli işaretçiler
+- Filtreleme: tarih, minimum/maksimum büyüklük, şehir
+- İstatistik kartları (Chart.js): son 24 saat, büyüklük dağılımı, derinlik dağılımı, bölgesel aktivite
+- 120 saniyelik otomatik yenileme (kapatılabilir, sıklık seçilebilir) + geri sayım göstergesi
+- Koyu tema, mobil/tablet uyumlu düzen
+- JSON API: `/api/v1/depremler`
 
-## Teknolojiler
+## Teknoloji
 
-- Frontend: HTML, CSS (Tailwind CSS), JavaScript
-- Backend: Node.js, Express.js
-- Harita: Leaflet.js
-- Template Engine: EJS
-- Güvenlik: Helmet, Rate Limiting, Input Validation
+| Katman | Kullanılan |
+|---|---|
+| Sunucu | Node.js ≥18, Express 4 |
+| Şablon | EJS |
+| CSS | Tailwind CSS 3 (build sırasında derlenir, CDN yok) |
+| Harita | Leaflet 1.9 (CDN) |
+| Grafik | Chart.js + chartjs-plugin-datalabels (CDN) |
+| Dağıtım | Vercel (tek serverless fonksiyon: `index.js`) |
 
 ## Veri Kaynağı
 
-Bu uygulama, Boğaziçi Üniversitesi Kandilli Rasathanesi ve Deprem Araştırma Enstitüsü'nün resmi web sitesinden (http://www.koeri.boun.edu.tr/scripts/lst0.asp) veri çekmektedir. Veriler, web scraping yöntemi ile alınmakta ve gerçek zamanlı olarak güncellenmektedir.
+Veriler `http://www.koeri.boun.edu.tr/scripts/lst0.asp` adresinden HTML kazıma (scraping) ile alınır, sunucu tarafında ayrıştırılır ve 2 dakika bellekte önbelleklenir.
 
-### Veri Çekme Süreci
-
-1. Kandilli Rasathanesi'nin web sitesine HTTP isteği yapılır
-2. Gelen HTML içeriği parse edilir
-3. Deprem verileri ayrıştırılır ve yapılandırılır
-4. Veriler JSON formatında API üzerinden sunulur
+> ⚠️ Kandilli sayfa yapısını değiştirirse ayrıştırma kırılır. Uygulama bu durumda hata vermek yerine son önbellekteki veriyi, o da yoksa boş listeyi döndürür.
 
 ## Kurulum
 
-### Geliştirme Ortamında Çalıştırma
-
-1. Projeyi klonlayın:
-```bash
-git clone https://github.com/cenktekin/sismolog.git
-cd sismolog
-```
-
-2. Bağımlılıkları yükleyin:
 ```bash
 npm install
+npm run build     # public/css/style.css üretilir (Tailwind derlemesi)
+npm start         # http://localhost:3000
 ```
 
-3. Uygulamayı başlatın:
-```bash
-npm start
-```
+`public/` derleme çıktısıdır ve repoda tutulmaz; bu yüzden `npm start` öncesinde `npm run build` gerekir.
+Geliştirme sırasında `npm run dev` (nodemon) kullanılabilir.
 
-4. Tarayıcıda `http://localhost:3000` adresini açın
+### Script'ler
 
-### Production Ortamı (Vercel)
+| Komut | Ne yapar |
+|---|---|
+| `npm start` | Sunucuyu başlatır |
+| `npm run build` | Tailwind CSS'i `public/css/style.css` olarak derler |
+| `npm run dev` | nodemon ile izleyerek başlatır |
+| `npm run check` | `index.js` + tarayıcı script'lerinde sözdizimi kontrolü |
 
-Proje otomatik olarak Vercel'e deploy edilir:
-
-**Canlı Uygulama**: https://sismolog-fj13lgl4o-cenktekins-projects.vercel.app
-
-**Vercel Yönetim Paneli**: https://vercel.com/cenktekins-projects/sismolog
-
-#### Otomatik Deploy
-
-Proje GitHub ile entegre edilmiştir. Herhangi bir branch'e push yapılınca otomatik olarak deploy edilir:
-
-```bash
-# Değişiklikleri pushlayın
-git add .
-git commit -m "Update deprem verisi ayrıştırma"
-git push origin main
-```
-
-#### Vercel Özellikleri
-
-- ✅ **Otomatik Deploy**: Her push'ta otomatik deploy
-- ✅ **Rollback**: Eski versiyonlara kolayca geri dönüş
-- ✅ **Deploy History**: Tüm deploy geçmişini görme
-- ✅ **Environment Variables**: Web arayüzünden yönetim
-- ✅ **Performance Analytics**: Performans metrikleri
-- ✅ **Custom Domain**: Özel domain ekleme desteği
-
-## API Kullanımı
-
-### Deprem Verilerini Getirme
+## API
 
 ```http
 GET /api/v1/depremler
 ```
 
-#### Query Parametreleri
+| Parametre | Açıklama | Örnek |
+|---|---|---|
+| `tarih` | Belirli gün (YYYY.AA.GG) | `?tarih=2026.10.27` |
+| `min` | Minimum büyüklük | `?min=4.0` |
+| `max` | Maksimum büyüklük | `?max=2.5` |
+| `sehir` | Şehir (parantezli etiket) | `?sehir=(YALOVA)` |
 
-- `tarih`: Belirli bir tarihteki depremleri filtreleme
-- `min`: Minimum büyüklük
-- `max`: Maksimum büyüklük
-- `sehir`: Şehir bazlı filtreleme
-
-#### Örnek İstekler
+Yanıt: `tarih, saat, enlem, boylam, derinlik, buyukluk, yer, sehir` alanlarını taşıyan nesne dizisi.
+Yanıt başlıkları: `X-Cache-Age`, `X-Cache-Max-Age`, `X-Data-Source`.
 
 ```bash
-# Tüm deprem verilerini getir
-curl https://sismolog-fj13lgl4o-cenktekins-projects.vercel.app/api/v1/depremler
-
-# 4.0 ve üzeri depremleri getir
 curl "https://sismolog-fj13lgl4o-cenktekins-projects.vercel.app/api/v1/depremler?min=4.0"
-
-# Belirli bir şehre ait depremleri getir
-curl "https://sismolog-fj13lgl4o-cenktekins-projects.vercel.app/api/v1/depremler?sehir=BALIKESIR"
 ```
 
-## Güvenlik
+## Mimari
 
-- Helmet güvenlik başlıkları
-- XSS koruması
-- Veri temizleme (mongo-sanitize)
-- Rate limiting
-- CORS koruması
-- Winston logging
+```
+index.js              Express uygulaması: veri çekme/ayrıştırma, önbellek, 2 rota
+views/index.ejs       Tek sayfa arayüzü
+assets/js/app.js      Liste, harita, filtreler, otomatik yenileme
+assets/js/stats.js    İstatistik kartları ve grafikler
+assets/css/*.css      Tailwind kaynağı (tailwind.css) + el yazımı stiller
+public/               Derleme çıktısı (git'te yok)
+archive/              Kullanılmayan eski dosyalar (PHP kalıntıları, ölü API, eski testler)
+```
 
-## Katkıda Bulunma
+## Bilinen Sınırlar
 
-Katkılarınızı memnuniyetle karşılıyoruz! Projeye katkıda bulunmak için:
-
-1. Bu projeyi forklayın
-2. Yeni bir branch oluşturun (`git checkout -b feature/amazing-feature`)
-3. Değişikliklerinizi yapın ve commit edin (`git commit -m 'Add some amazing feature'`)
-4. Branch'inizi push edin (`git push origin feature/amazing-feature`)
-5. Pull Request oluşturun
+- Kimlik doğrulama, veritabanı, Socket.IO/gerçek zamanlı itme **yoktur**; yenileme istemci tarafında zamanlayıcıyla yapılır.
+- Otomatik test yoktur. `archive/2026-10-27-legacy/tests/` altındaki eski testler gerçek kodu import etmediği için devre dışı bırakıldı.
+- Tek veri kaynağı (Kandilli) — ikinci kaynak/AFAD yedeği yoktur.
+- Sunucu tarafı güvenlik başlıkları (Helmet), rate limiting ve CORS yapılandırması **yoktur**; yalnızca `express.json`/`express.urlencoded` ve statik dosya sunumu vardır.
+- Veriler bilgilendirme amaçlıdır, resmî kaynak yerine geçmez.
 
 ## Lisans
 
-Bu proje MIT Lisansı ile lisanslanmıştır - detaylar için [LICENSE](LICENSE) dosyasına bakın.
+MIT — bkz. [LICENSE](LICENSE).
 
-## Yasal Uyarı
-
-Bu uygulama açık kaynak bir projedir. Ticari amaçla kullanılamaz. Veriler Boğaziçi Üniversitesi Kandilli Rasathanesi ve Deprem Araştırma Enstitüsü'nden alınmaktadır. Kullanımdan doğabilecek hiçbir sorumluluk kabul edilmemektedir.
-
-## İletişim
-
-Proje Geliştirici: Cenk Tekin
-
-Proje Linki: [https://github.com/cenktekin/sismolog](https://github.com/cenktekin/sismolog)
+Veriler Boğaziçi Üniversitesi Kandilli Rasathanesi ve Deprem Araştırma Enstitüsü'nden alınmaktadır. Kullanımdan doğabilecek sorumluluk kabul edilmez.

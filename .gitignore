@@ -84,7 +84,9 @@ dist
 
 # Gatsby files
 .cache/
-public
+
+# Build output (npm run build -> public/css/style.css)
+/public/
 
 # vuepress build output
 .vuepress/dist
@@ -112,17 +114,15 @@ public
 .pnp.*
 .vercel
 
-# Development tools and configuration
+# Development tools and local-only notes
 .kiro/
-.github/secrets-setup.md
-docs/
+NEXT_ACTIONS.md
 
-# Test files (development only)
-test_auto_update.js
-test_depth_api.js
-test_depth_debug.js
-ALIAS_MAP.json
+# Local runtime artifacts
 server.log
+
+# Local archive of removed legacy files (not committed)
+archive/
 
 # Project template files (auto-generated)
 * - Genel Bakış.md
