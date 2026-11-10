@@ -7,7 +7,7 @@
     "start": "node index.js",
     "build": "tailwindcss -i ./assets/css/tailwind.css -o ./public/css/style.css",
     "dev": "nodemon index.js",
-    "test": "node --test tests/",
+    "test": "node --test tests/parse.test.js tests/sources.test.js tests/app.test.js",
     "check": "node --check index.js && node --check lib/app.js && node --check lib/parse.js && node --check lib/sources.js && node --check assets/js/core.js && node --check assets/js/map.js && node --check assets/js/list.js && node --check assets/js/refresh.js && node --check assets/js/app.js && node --check assets/js/stats.js"
   },
   "dependencies": {
